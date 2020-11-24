@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta Http-Equiv="Cache-Control" Content="no-cache">
+  <meta Http-Equiv="Pragma" Content="no-cache">
+  <meta Http-Equiv="Expires" Content="0"> 
+  <title> Payment Method </title>
+
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" >
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+  </script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js">
+  </script>
+  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+
+  <style>
+.label{
+  float: left;
+    color: #656262;
+}
+.input{
+background-color: #f2f5f2;
+    border-radius: 8px;
+    padding: 8px;
+    width: 100%;
+    margin: 10px;
+}
+.input:hover{
+border: 3px solid #dd3545;
+}
+.button{
+  background-color: #dd3545;
+    border-radius: 25px;
+    color: white;
+    height: 50px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+.error-message{
+
+  background-color: #dd4c35e6;
+    border-radius: 3px;
+    color: white;
+    margin: 10px;
+    text-align: center;
+}
+.success-message{
+
+  background-color: #0fab0f;
+    border-radius: 3px;
+    color: white;
+    margin: 10px;
+    text-align: center;
+}
+  </style>
+
+</head>
+
+<body>
+
+  <article>
+    <section>
+
+      <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+          <div class="center-body-content">
+
+            <h3 class="mt-4" align="center"> Add Payment Method</h3>
+            <div class="mt-4">
+              <label class="label">Card Number</label>
+              <input type="text" id="acc_addPayment_cardNo" name="" class="input" placeholder="1234 1234 1234 1234">
+              <div class="row">
+                <div class="col-md-6">
+                  <label class="label"> Expiration Date</label>
+                  <input type="text" id="acc_addPayment_cardExDate" name="" class="input" placeholder="MM/YY">
+
+                </div>
+                <div class="col-md-6">
+                  <label class="label">Security Code</label>    
+                  <input type="text" id="acc_addPayment_cardScode" name="" class="input" maxlength="3" placeholder="CVC">
+
+                </div>
+              </div>
+
+              <div align="center" class="text-align-center" ><button class="button" type="button" onclick="checkAddPyamentDetails()"> Add Payment Method</button></div>
+            </div>
+            <div class="error-message"><span  id="error_message"></span></div>
+            <div class="success-message"><span  id="success_message"></span></div>
+
+
+          </div>
+
+
+
+        </div>
+
+
+
+      </div>
+
+
+    </section>
+  </article>
+
+  <script type="text/javascript">
+  function acc_cc_format(value) {
+    var v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '')
+    var matches = v.match(/\d{4,16}/g);
+    var match = matches && matches[0] || ''
+    var parts = []
+    for (i=0, len=match.length; i<len; i+=4) {
+      parts.push(match.substring(i, i+4))
+    }
+    if (parts.length) {
+      return parts.join(' ')
+    } else {
+      return value;
+    }
+  }
+
+  function acc_Exp_format(value) {
+    var v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '')
+    var matches = v.match(/\d{2,3}/g);
+    var match = matches && matches[0] || ''
+    var parts = []
+    for (i=0, len=match.length; i<len; i+=2) {
+      parts.push(match.substring(i, i+2))
+    }
+    if (parts.length) {
+      return parts.join('/')
+    } else {
+      return value;
+    }
+  }
+
+  $('#acc_addPayment_cardNo').on('keydown input', function () {
+    this.value = acc_cc_format(this.value);
+    var code = (event.which) ? event.which : event.keyCode;
+    if ((code < 48 || code > 57) && (code > 31)) {
+      return false;
+    }
+  });
+  $('#acc_addPayment_cardExDate').on('keypress oninput', function () {
+    this.value = acc_Exp_format(this.value);
+    var code = (event.which) ? event.which : event.keyCode;
+    if ((code < 48 || code > 57) && (code > 31)) {
+      return false;
+    }
+  });
+
+  $('#acc_addPayment_cardScode').on('keypress oninput', function () {
+    var code = (event.which) ? event.which : event.keyCode;
+    if ((code < 48 || code > 57) && (code > 31)) {
+      return false;
+    }
+  });
+
+
+  function checkAddPyamentDetails(){
+    var valid = true;
+    $("#error_message").text("");
+    $("#success_message").text("");
+    if(($('#acc_addPayment_cardScode').val()).length < 3){ $("#error_message").text("Please check Security Code."); valid =  false; }
+    if(($('#acc_addPayment_cardExDate').val()).length < 5){ $("#error_message").text("Please check Expiration Date."); valid =  false; }
+    if(($('#acc_addPayment_cardExDate').val()).length == 5){ 
+      var cur_date = new Date();
+      var cur_year = cur_date.getFullYear().toString().substr(-2);
+      var cur_month=(cur_date.getMonth()<9 ? '0':'')+(cur_date.getMonth()+1);
+      var date_arr = $('#acc_addPayment_cardExDate').val().split("/");
+      if(cur_year <= date_arr[1]){        
+        if((cur_year == date_arr[1])&&(cur_month > date_arr[0])){
+        $("#error_message").text("Please check Expiration Month."); valid =  false;
+        }
+      }else{ $("#error_message").text("Please check Expiration Year."); valid =  false; } 
+    }
+
+    if(($('#acc_addPayment_cardNo').val()).length < 19){ $("#error_message").text("Please check Card Number."); valid =  false; }
+    // if(($('#acc_addPayment_cardNo').val()).length == 19){
+    //   var arr = $('#acc_addPayment_cardNo').val().split(" ");
+    //   if(arr.length != 4){ $("#error_message").text("Please check Card Number."); valid =  false; } 
+    // }
+    if (valid == true) {
+
+      $("#success_message").text("Matched!");
+
+    }
+
+  }
+  </script>
+  <footer>
+
+  </footer>
+
+</body>
+</html>
